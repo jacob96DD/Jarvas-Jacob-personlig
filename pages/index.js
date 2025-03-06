@@ -6,7 +6,7 @@ export default function Home() {
     <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-gray-50">
       <main className="flex flex-col items-center justify-center w-full flex-1 px-4 sm:px-20 text-center">
         <h1 className="text-4xl font-bold mb-6">
-          Velkommen til <span className="text-blue-600">Chat Appen</span>
+          Bestseller bydes velkommen til<span className="text-blue-600">Chat Appen</span>
         </h1>
         
         <p className="text-lg mb-8">

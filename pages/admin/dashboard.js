@@ -225,6 +225,43 @@ export async function getServerSideProps({ req, res }) {
   const { admin_token } = req.cookies;
   
   if (!admin_token) {
+    console.log('No admin token found, redirecting to login');
+    return {
+      redirect: {
+        destination: '/admin/login',
+        permanent: false,
+      },
+    };
+  }
+  
+  try {
+    // Verify token manually
+    const decodedToken = JSON.parse(Buffer.from(admin_token, 'base64').toString());
+    
+    if (!decodedToken || decodedToken.role !== 'admin') {
+      console.log('Invalid token data, redirecting to login');
+      return {
+        redirect: {
+          destination: '/admin/login',
+          permanent: false,
+        },
+      };
+    }
+    
+    // Check if token is expired
+    if (decodedToken.exp && decodedToken.exp < Math.floor(Date.now() / 1000)) {
+      console.log('Expired token, redirecting to login');
+      return {
+        redirect: {
+          destination: '/admin/login',
+          permanent: false,
+        },
+      };
+    }
+    
+    console.log('Valid admin token, proceeding to dashboard');
+  } catch (error) {
+    console.error('Error validating token:', error);
     return {
       redirect: {
         destination: '/admin/login',
