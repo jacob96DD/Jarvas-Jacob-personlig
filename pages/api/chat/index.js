@@ -39,8 +39,8 @@ export default async function handler(req, res) {
     let botResponse;
     
     // Definer din assistent's ID - hardcoded for at sikre os
-    const ASSISTANT_ID = "asst_erhkOfh8iaWhXEhy6oacvgbS";
-    const ASSISTANT_API_KEY = "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";
+    const ASSISTANT_ID = process.env.OPENAI_ASSISTANT_ID;
+    const ASSISTANT_API_KEY = process.env.OPENAI_ASSISTANT_API_KEY;
     
     if (parseInt(botId) === 1) {
       // Bot 1: Brug din Assistant med direct fetch implementation
