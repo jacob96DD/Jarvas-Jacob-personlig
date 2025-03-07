@@ -79,21 +79,34 @@ export default function ChatInterface({ botId, botName }) {
         }),
       });
       
-      const data = await response.json();
-      
-      if (response.ok) {
-        console.log('Received response:', data);
-        setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
-      } else {
-        console.error('Error from API:', data.error || response.statusText);
+      let data;
+      try {
+        data = await response.json();
+        
+        if (response.ok) {
+          console.log('Received response:', data);
+          setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
+        } else {
+          console.error('Error from API:', data.error || response.statusText);
+          setMessages(prev => [
+            ...prev,
+            { role: 'assistant', content: data.response || 'Beklager, der opstod en fejl. Prøv igen senere.' },
+          ]);
+          
+          if (data.error) {
+            setError(`Fejl: ${data.error}`);
+          }
+        }
+      } catch (jsonError) {
+        // If JSON parsing fails, handle the response as text
+        console.error('Failed to parse response as JSON:', jsonError);
+        const errorText = await response.text();
+        console.error('Raw response:', errorText);
         setMessages(prev => [
           ...prev,
-          { role: 'assistant', content: data.response || 'Beklager, der opstod en fejl. Prøv igen senere.' },
+          { role: 'assistant', content: 'Beklager, serveren returnerede et ugyldigt svar.' },
         ]);
-        
-        if (data.error) {
-          setError(`Fejl: ${data.error}`);
-        }
+        setError(`Serverfejl: Kunne ikke fortolke svaret. ${jsonError.message}`);
       }
     } catch (error) {
       console.error('Failed to send message:', error);
