@@ -77,8 +77,26 @@ export default async function handler(req, res) {
     return res.status(200).json({ response: botResponse });
   } catch (error) {
     console.error('Error in chat API:', error);
-    return res.status(500).json({ 
-      response: `Der opstod en fejl: ${error.message}` 
-    });
+    
+    // Add debugging for the error object
+    console.error('Error type:', typeof error);
+    console.error('Error is instance of Error:', error instanceof Error);
+    console.error('Error properties:', Object.keys(error));
+    console.error('Error stack:', error.stack);
+    
+    try {
+      // Make sure we properly return a JSON response even in error cases
+      return res.status(500).json({ 
+        response: `Der opstod en fejl: ${error.message}`,
+        error: error.message
+      });
+    } catch (jsonError) {
+      console.error('Failed to serialize error as JSON:', jsonError);
+      // Fallback to a basic JSON response if we can't serialize the error
+      return res.status(500).json({
+        response: 'Der opstod en fejl på serveren.',
+        error: 'Intern serverfejl'
+      });
+    }
   }
 }

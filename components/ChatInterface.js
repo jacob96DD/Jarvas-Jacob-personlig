@@ -79,9 +79,19 @@ export default function ChatInterface({ botId, botName }) {
         }),
       });
       
+      // First check the response status and content type
+      console.log('Response status:', response.status);
+      console.log('Response headers:', Object.fromEntries([...response.headers]));
+      
       let data;
+      // Clone the response to read it twice if needed
+      const clonedResponse = response.clone();
+      
       try {
+        // Try to parse as JSON first
+        console.log('Attempting to parse response as JSON...');
         data = await response.json();
+        console.log('Successfully parsed response as JSON:', data);
         
         if (response.ok) {
           console.log('Received response:', data);
@@ -100,13 +110,22 @@ export default function ChatInterface({ botId, botName }) {
       } catch (jsonError) {
         // If JSON parsing fails, handle the response as text
         console.error('Failed to parse response as JSON:', jsonError);
-        const errorText = await response.text();
-        console.error('Raw response:', errorText);
-        setMessages(prev => [
-          ...prev,
-          { role: 'assistant', content: 'Beklager, serveren returnerede et ugyldigt svar.' },
-        ]);
-        setError(`Serverfejl: Kunne ikke fortolke svaret. ${jsonError.message}`);
+        try {
+          const errorText = await clonedResponse.text();
+          console.error('Raw response text:', errorText);
+          setMessages(prev => [
+            ...prev,
+            { role: 'assistant', content: 'Beklager, serveren returnerede et ugyldigt svar.' },
+          ]);
+          setError(`Serverfejl: Kunne ikke fortolke svaret. ${jsonError.message}`);
+        } catch (textError) {
+          console.error('Failed to read response as text:', textError);
+          setMessages(prev => [
+            ...prev,
+            { role: 'assistant', content: 'Beklager, kunne ikke læse serversvaret.' },
+          ]);
+          setError('Serverfejl: Kunne ikke læse svaret fra serveren.');
+        }
       }
     } catch (error) {
       console.error('Failed to send message:', error);
