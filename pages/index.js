@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FiMessageSquare, FiSettings } from 'react-icons/fi';
+import { FiMessageSquare, FiSettings, FiUpload } from 'react-icons/fi';
 
 export default function Home() {
   return (
@@ -35,7 +35,15 @@ export default function Home() {
           </Link>
         </div>
         
-        <div className="mt-12">
+        <div className="mt-12 flex flex-col gap-4">
+          <Link href="/upload" className="inline-flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">
+            <FiUpload /> Upload Fil
+          </Link>
+          
+          <Link href="/blob-demo" className="inline-flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">
+            <FiUpload /> Blob Demo
+          </Link>
+          
           <Link href="/admin/login" className="inline-flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">
             <FiSettings /> Admin Dashboard
           </Link>
@@ -44,7 +52,7 @@ export default function Home() {
       
       <footer className="flex items-center justify-center w-full h-20 border-t border-gray-200">
         <p className="text-gray-500 text-sm">
-          Chat-sessions will be saved in 7 days.
+          Chat-sessions will be saved in 7 days
         </p>
       </footer>
     </div>
