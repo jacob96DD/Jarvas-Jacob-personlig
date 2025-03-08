@@ -47,7 +47,14 @@ export default async function handler(req, res) {
       console.log('Using Direct Assistant API for Bot 1 with Assistant ID:', ASSISTANT_ID);
       
       const messages = [{ role: 'user', content: message }];
-      botResponse = await getAssistantResponseDirect(ASSISTANT_ID, messages, ASSISTANT_API_KEY);
+      const assistantResponse = await getAssistantResponseDirect(ASSISTANT_ID, messages, ASSISTANT_API_KEY);
+      console.log('Assistant response object:', assistantResponse);
+      
+      if (!assistantResponse.success && assistantResponse.error) {
+        throw new Error(assistantResponse.error);
+      }
+      
+      botResponse = assistantResponse.text;
     } else if (parseInt(botId) === 2) {
       // Bot 2: Brug almindelig GPT med den anden API-nøgle
       console.log('Using standard OpenAI API for Bot 2');
@@ -61,7 +68,14 @@ export default async function handler(req, res) {
         { role: 'user', content: message }
       ];
       
-      botResponse = await getChatCompletion(messages);
+      const completionResponse = await getChatCompletion(messages);
+      console.log('Chat completion response object:', completionResponse);
+      
+      if (!completionResponse.success && completionResponse.error) {
+        throw new Error(completionResponse.error);
+      }
+      
+      botResponse = completionResponse.text;
     } else {
       return res.status(400).json({ error: 'Invalid bot ID' });
     }

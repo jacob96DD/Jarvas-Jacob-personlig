@@ -44,7 +44,7 @@ export default function Home() {
       
       <footer className="flex items-center justify-center w-full h-20 border-t border-gray-200">
         <p className="text-gray-500 text-sm">
-          Chat-sessions will be saved in 7 days
+          Chat-sessions will be saved in 7 days.
         </p>
       </footer>
     </div>
