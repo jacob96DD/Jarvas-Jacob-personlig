@@ -49,11 +49,12 @@ export default async function handler(req, res) {
             const messages = [{ role: 'user', content: message }];
             botResponse = await getAssistantResponseDirect(ASSISTANT_ID, messages, ASSISTANT_API_KEY);
         } else if (parseInt(botId) === 2) {
-            // Bot 2: Use your custom Assistant with direct fetch implementation
-            console.log('Using Direct Assistant API for Bot 2 with Assistant ID:', ASSISTANT_ID_erhversjurist);
+            // Bot 2: Use the custom erhversjurist Assistant with direct fetch implementation
+            const assistantId = process.env.OPENAI_ASSISTANT_ID_erhversjurist;
+            console.log('Using Direct Assistant API for Bot 2 with Assistant ID:', assistantId);
 
             const messages = [{ role: 'user', content: message }];
-            botResponse = await getAssistantResponseDirect(ASSISTANT_ID_erhversjurist, messages, process.env.OPENAI_ASSISTANT_API_KEY);
+            botResponse = await getAssistantResponseDirect(assistantId, messages, process.env.OPENAI_ASSISTANT_API_KEY);
         } else {
             return res.status(400).json({ error: 'Invalid bot ID' });
         }
