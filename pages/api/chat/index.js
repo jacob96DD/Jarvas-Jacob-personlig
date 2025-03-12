@@ -41,6 +41,7 @@ export default async function handler(req, res) {
         // Definer din assistent's ID - hardcoded for at sikre os
         const ASSISTANT_ID = process.env.OPENAI_ASSISTANT_ID;
         const ASSISTANT_API_KEY = process.env.OPENAI_ASSISTANT_API_KEY;
+        const ASSISTANT_ID_erhverv = process.env.OPENAI_ASSISTANT_ID_erhversjurist;
 
         if (parseInt(botId) === 1) {
             // Bot 1: Brug din Assistant med direct fetch implementation
@@ -49,12 +50,11 @@ export default async function handler(req, res) {
             const messages = [{ role: 'user', content: message }];
             botResponse = await getAssistantResponseDirect(ASSISTANT_ID, messages, ASSISTANT_API_KEY);
         } else if (parseInt(botId) === 2) {
-            // Bot 2: Use the custom erhversjurist Assistant with direct fetch implementation
-            const assistantId = process.env.OPENAI_ASSISTANT_ID_erhversjurist;
-            console.log('Using Direct Assistant API for Bot 2 with Assistant ID:', assistantId);
+            // Bot 2: Use your custom Assistant with direct fetch implementation
+            console.log('Using Direct Assistant API for Bot 2 with Assistant ID:', ASSISTANT_ID_erhverv);
 
             const messages = [{ role: 'user', content: message }];
-            botResponse = await getAssistantResponseDirect(assistantId, messages, process.env.OPENAI_ASSISTANT_API_KEY);
+            botResponse = await getAssistantResponseDirect(ASSISTANT_ID_erhverv, messages, ASSISTANT_API_KEY);
         } else {
             return res.status(400).json({ error: 'Invalid bot ID' });
         }
