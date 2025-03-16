@@ -10,13 +10,11 @@ export default function Bot1() {
         <title>Chat med Din Assistant | Chat App</title>
       </Head>
       
-      <header class="header">
-        <h1 class="title">Hjem</h1>
-      </header>
-      <div class="navigation-bar">
-        <button class="back-button">
-          <i class="arrow-left"></i> Tilbage
-        </button>
+      <div className="absolute top-4 left-4">
+        <Link href="/" className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition-colors">
+          <FiArrowLeft />
+          <span>Hjem</span>
+        </Link>
       </div>
       
       <ChatInterface botId={1} botName="Din Tilpassede Assistant" />
