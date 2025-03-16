@@ -10,11 +10,13 @@ export default function Bot2() {
         <title>Chat med Standard GPT | Chat App</title>
       </Head>
       
-      <div className="absolute top-4 left-4">
-        <Link href="/" className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition-colors">
-          <FiArrowLeft />
-          <span>Hjem</span>
-        </Link>
+      <header className="header">
+        <h1 className="title">Hjem</h1>
+      </header>
+      <div className="navigation-bar">
+        <button className="back-button">
+          <i className="arrow-left"></i> Tilbage
+        </button>
       </div>
       
       <ChatInterface botId={2} botName="Standard GPT Bot" />
