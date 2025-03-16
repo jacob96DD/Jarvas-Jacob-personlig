@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { format } from 'date-fns';
@@ -69,10 +69,20 @@ export default function AdminDashboard() {
   
   // Format date for display
   const formatDate = (dateString) => {
+    if (!dateString) return 'Ukendt dato';
+    
     try {
-      return format(new Date(dateString), 'MMM dd, yyyy HH:mm');
+      const date = new Date(dateString);
+      return date.toLocaleString('da-DK', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
     } catch (error) {
-      return 'Invalid date';
+      console.error('Fejl ved formatering af dato:', error);
+      return 'Ugyldig dato';
     }
   };
   
@@ -80,6 +90,47 @@ export default function AdminDashboard() {
   const handleLogout = () => {
     document.cookie = 'admin_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     router.push('/admin/login');
+  };
+  
+  // I useEffect eller loadConversations-funktionen
+  const loadConversations = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      console.log('Indlæser samtaler...');
+      const response = await fetch('/api/admin/conversations');
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Server svarede ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log(`Indlæste ${data.length} samtaler`);
+      
+      setConversations(data);
+    } catch (error) {
+      console.error('Fejl ved indlæsning af samtaler:', error);
+      setError('Failed to load conversations');
+      setConversations([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  
+  // Konverteringsfunktion til at vise samtaler korrekt
+  const formatConversation = (conv) => {
+    return {
+      id: conv.id || 'unknown',
+      botId: conv.botId || 'Unknown',
+      sessionId: conv.sessionId || 'Unknown',
+      createdAt: conv.createdAt ? new Date(conv.createdAt) : null,
+      updatedAt: conv.updatedAt ? new Date(conv.updatedAt) : null,
+      messageCount: conv.messages?.length || 0,
+      blobUrl: conv.blobUrl || null,
+      // tilføj andre felter efter behov
+    };
   };
   
   return (
@@ -120,36 +171,39 @@ export default function AdminDashboard() {
               ) : conversations.length === 0 ? (
                 <div className="p-4 text-center text-gray-500">No conversations found</div>
               ) : (
-                conversations.map((conv) => (
-                  <div
-                    key={conv.id}
-                    className={`p-4 cursor-pointer hover:bg-gray-50 ${
-                      selectedConversation && selectedConversation.id === conv.id
-                        ? 'bg-blue-50'
-                        : ''
-                    }`}
-                    onClick={() => handleConversationClick(conv.id)}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0 mt-1">
-                        <div className="bg-blue-100 rounded-full p-2">
-                          <FiMessageSquare className="text-blue-600" />
+                conversations.map((conv) => {
+                  const formattedConv = formatConversation(conv);
+                  return (
+                    <div
+                      key={formattedConv.id}
+                      className={`p-4 cursor-pointer hover:bg-gray-50 ${
+                        selectedConversation && selectedConversation.id === formattedConv.id
+                          ? 'bg-blue-50'
+                          : ''
+                      }`}
+                      onClick={() => handleConversationClick(formattedConv.id)}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 mt-1">
+                          <div className="bg-blue-100 rounded-full p-2">
+                            <FiMessageSquare className="text-blue-600" />
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium">
+                            Bot #{formattedConv.botId} - Session {formattedConv.sessionId?.substring(0, 8) || 'N/A'}...
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {formattedConv.createdAt ? formattedConv.createdAt.toLocaleString() : 'Invalid date'}
+                          </p>
+                          <p className="text-sm text-gray-600 truncate mt-1">
+                            {formattedConv.messageCount} message(s)
+                          </p>
                         </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium">
-                          Bot #{conv.botId || 'Unknown'} - Session {typeof conv.id === 'string' ? conv.id.substring(0, 8) : 'N/A'}...
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {formatDate(conv.createdAt || 'Invalid date')}
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          {conv.messages && conv.messages.length > 0 ? `${conv.messages.length} messages` : 'No messages'}
-                        </p>
-                      </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
           </div>
@@ -159,56 +213,55 @@ export default function AdminDashboard() {
               <>
                 <div className="p-4 bg-gray-100 border-b border-gray-200">
                   <h2 className="font-semibold">
-                    Conversation Details - Bot #{selectedConversation.bot_id}
+                    Samtaledetaljer - Bot #{selectedConversation.botId || 'Ukendt'}
                   </h2>
                   <p className="text-sm text-gray-500">
-                    Created: {formatDate(selectedConversation.created_at)}
-                    {' | '}
-                    Expires: {formatDate(selectedConversation.expires_at)}
+                    Oprettet: {formatDate(selectedConversation.createdAt)} | 
+                    Udløber: {formatDate(selectedConversation.expiresAt)}
                   </p>
                 </div>
                 
                 <div className="p-4 max-h-[70vh] overflow-y-auto">
-                  {selectedConversation.messages.length === 0 ? (
-                    <div className="text-center text-gray-500 py-8">
-                      No messages in this conversation
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {selectedConversation.messages.map((msg, index) => (
-                        <div
-                          key={index}
-                          className={`flex ${
-                            msg.role === 'user' ? 'justify-start' : 'justify-end'
-                          }`}
+                  <div className="space-y-4">
+                    {selectedConversation.messages && selectedConversation.messages.length > 0 ? (
+                      selectedConversation.messages.map((message, index) => (
+                        <div 
+                          key={index} 
+                          className={`flex ${message.role === 'user' ? 'justify-start' : 'justify-end'}`}
                         >
-                          <div
+                          <div 
                             className={`max-w-[75%] rounded-lg px-4 py-2 ${
-                              msg.role === 'user'
-                                ? 'bg-gray-200 text-gray-800'
+                              message.role === 'user' 
+                                ? 'bg-gray-200 text-gray-800' 
                                 : 'bg-blue-500 text-white'
                             }`}
                           >
                             <div className="flex items-center gap-2 mb-1">
                               <span className="font-medium">
-                                {msg.role === 'user' ? 'User' : 'Bot'}
+                                {message.role === 'user' ? 'Bruger' : 'Bot'}
                               </span>
                               <span className="text-xs opacity-75">
-                                {msg.created_at && formatDate(msg.created_at)}
+                                {formatDate(message.createdAt)}
                               </span>
                             </div>
-                            <p className="whitespace-pre-wrap">{msg.content}</p>
+                            <p className="whitespace-pre-wrap">{message.content}</p>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
+                      ))
+                    ) : (
+                      <div className="text-center text-gray-500 py-8">
+                        Ingen beskeder i denne samtale
+                      </div>
+                    )}
+                  </div>
                 </div>
               </>
             ) : (
-              <div className="flex flex-col items-center justify-center h-full py-12 text-gray-500">
-                <FiMessageSquare className="text-5xl mb-4" />
-                <p className="text-lg">Select a conversation to view details</p>
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center text-gray-500">
+                  <div className="text-6xl mb-4">💬</div>
+                  <p>Vælg en samtale for at se detaljer</p>
+                </div>
               </div>
             )}
           </div>

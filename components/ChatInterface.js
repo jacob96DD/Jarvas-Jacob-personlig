@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { FiSend, FiUser, FiCpu, FiAlertCircle } from 'react-icons/fi';
 import { getOrCreateSessionId } from '../lib/session';
 
@@ -11,37 +11,37 @@ export default function ChatInterface({ botId, botName }) {
   const inputRef = useRef(null);
   
   // Load chat history from session on mount
-  useEffect(() => {
-    const loadChatHistory = async () => {
-      try {
-        setError(null);
-        const sessionId = getOrCreateSessionId();
-        console.log('Loading chat history for bot', botId, 'with session', sessionId);
-        
-        const response = await fetch(`/api/chat/history?sessionId=${sessionId}&botId=${botId}`);
-        
-        if (response.ok) {
-          const history = await response.json();
-          console.log('Loaded history:', history);
-          setMessages(history);
-        } else {
-          console.error('Error status:', response.status);
-          const errorData = await response.text();
-          console.error('Error loading chat history:', errorData);
-        }
-      } catch (error) {
-        console.error('Failed to load chat history:', error);
-        setError('Kunne ikke indlæse chat historik. Prøv at genindlæse siden.');
-      }
-    };
+  const loadChatHistory = useCallback(async () => {
+    if (!botId) return;
     
+    try {
+      setLoading(true);
+      const sessionId = getOrCreateSessionId();
+      console.log('Loading chat history for session:', sessionId, 'and bot:', botId);
+      
+      const response = await fetch(`/api/chat/history?botId=${botId}&sessionId=${sessionId}`);
+      const data = await response.json();
+      
+      // Sørg for at beskeder vises i den rigtige rækkefølge (ældste først)
+      if (Array.isArray(data)) {
+        console.log(`Loaded ${data.length} messages from history`);
+        setMessages(data);
+      }
+    } catch (error) {
+      console.error('Failed to load chat history:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [botId]);
+  
+  useEffect(() => {
     loadChatHistory();
     
     // Focus input on mount
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, [botId]);
+  }, [loadChatHistory]);
   
   // Scroll to bottom when messages update
   useEffect(() => {
@@ -183,6 +183,11 @@ export default function ChatInterface({ botId, botName }) {
                       <FiCpu className="text-sm" />
                       <span className="font-medium">{botName || `Bot #${botId}`}</span>
                     </>
+                  )}
+                  {msg.createdAt && (
+                    <span className="text-xs opacity-75">
+                      {new Date(msg.createdAt).toLocaleTimeString()}
+                    </span>
                   )}
                 </div>
                 <p className="whitespace-pre-wrap">{msg.content}</p>

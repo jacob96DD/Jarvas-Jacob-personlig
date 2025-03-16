@@ -46,41 +46,37 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   
-  if (req.method === 'GET') {
-    try {
-      const { id } = req.query;
-      
-      // If ID is provided, get specific conversation
-      if (id) {
-        console.log(`Fetching conversation with ID: ${id}`);
-        const conversation = await getConversationById(id);
-        
-        if (!conversation) {
-          return res.status(404).json({ error: 'Conversation not found' });
-        }
-        
-        return res.status(200).json(conversation);
-      }
-      
-      // Otherwise, get all conversations
-      console.log('Fetching all conversations');
-      let conversations = [];
-      
-      try {
-        conversations = await getAllConversations();
-      } catch (dbError) {
-        console.error('Database error fetching conversations:', dbError);
-        // Return empty array instead of failing
-        conversations = [];
-      }
-      
-      console.log(`Returning ${conversations.length} conversations`);
-      return res.status(200).json(conversations);
-    } catch (error) {
-      console.error('Error fetching conversations:', error);
-      return res.status(500).json({ error: `Failed to fetch conversations: ${error.message}` });
-    }
+  // Kun tillad GET-anmodninger
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
-  
-  return res.status(405).json({ error: 'Method not allowed' });
+
+  try {
+    const { id } = req.query;
+    
+    if (id) {
+      // Hent enkelt samtale hvis ID er angivet
+      console.log(`Admin API: Henter samtale med ID: ${id}`);
+      const conversation = await getConversationById(id);
+      
+      if (!conversation) {
+        return res.status(404).json({ error: 'Conversation not found' });
+      }
+      
+      return res.status(200).json(conversation);
+    } else {
+      // Hent alle samtaler
+      console.log('Admin API: Henter alle samtaler');
+      const conversations = await getAllConversations();
+      console.log(`Admin API: Returnerer ${conversations.length} samtaler`);
+      
+      return res.status(200).json(conversations);
+    }
+  } catch (error) {
+    console.error('Fejl i admin conversations API:', error);
+    return res.status(500).json({ 
+      error: 'Failed to load conversations',
+      details: error.message 
+    });
+  }
 }
