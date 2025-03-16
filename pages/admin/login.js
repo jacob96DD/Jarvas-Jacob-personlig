@@ -114,7 +114,7 @@ export default function AdminLogin() {
             </form>
             
             <div className="mt-4 text-sm text-gray-600 text-center">
-              <p>Default credentials: admin / admin123</p>
+              
             </div>
           </div>
         </div>
