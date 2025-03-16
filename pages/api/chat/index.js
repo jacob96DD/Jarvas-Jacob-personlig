@@ -10,8 +10,8 @@ export default async function handler(req, res) {
 
     try {
         console.log('Available environment variables:', {
-            OPENAI_API_KEY: process.env.OPENAI_API_KEY ? .substring(0, 5) + '...',
-            OPENAI_ASSISTANT_API_KEY: process.env.OPENAI_ASSISTANT_API_KEY ? .substring(0, 5) + '...',
+            OPENAI_API_KEY: process.env.OPENAI_API_KEY?.substring(0, 5) + '...',
+            OPENAI_ASSISTANT_API_KEY: process.env.OPENAI_ASSISTANT_API_KEY?.substring(0, 5) + '...',
             OPENAI_ASSISTANT_ID: process.env.OPENAI_ASSISTANT_ID,
         });
 

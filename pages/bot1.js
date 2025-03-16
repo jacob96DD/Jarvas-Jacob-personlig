@@ -18,7 +18,7 @@ export default function Bot1() {
         <h1 className="text-lg">Hirring assistent</h1>
       </div>
       
-      <ChatInterface botId={2} botName="Standard GPT Bot" />
+      <ChatInterface botId={1} botName="Jarvis assistent" />
     </div>
   );
 }

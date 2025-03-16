@@ -53,7 +53,7 @@ export default async function handler(req, res) {
       // If ID is provided, get specific conversation
       if (id) {
         console.log(`Fetching conversation with ID: ${id}`);
-        const conversation = await getConversationById(parseInt(id));
+        const conversation = await getConversationById(id);
         
         if (!conversation) {
           return res.status(404).json({ error: 'Conversation not found' });

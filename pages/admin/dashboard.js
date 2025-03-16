@@ -138,15 +138,13 @@ export default function AdminDashboard() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium">
-                          Bot #{conv.bot_id} - Session {conv.session_id.substring(0, 8)}...
+                          Bot #{conv.botId || 'Unknown'} - Session {typeof conv.id === 'string' ? conv.id.substring(0, 8) : 'N/A'}...
                         </p>
                         <p className="text-sm text-gray-500">
-                          {formatDate(conv.last_activity || conv.created_at)}
+                          {formatDate(conv.createdAt || 'Invalid date')}
                         </p>
-                        <p className="text-sm text-gray-600 truncate mt-1">
-                          {conv.last_message ? `"${conv.last_message.substring(0, 50)}${
-                            conv.last_message.length > 50 ? '...' : ''
-                          }"` : 'No messages'}
+                        <p className="text-xs text-gray-400">
+                          {conv.messages && conv.messages.length > 0 ? `${conv.messages.length} messages` : 'No messages'}
                         </p>
                       </div>
                     </div>

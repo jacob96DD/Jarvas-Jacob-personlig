@@ -18,7 +18,7 @@ export default function Bot2() {
         <h1 className="text-lg">Erhvervsjura beta GPT Bot</h1>
       </div>
       
-      <ChatInterface botId={2} botName="Standard GPT Bot" />
+      <ChatInterface botId={2} botName="jarvis law" />
     </div>
   );
 }
