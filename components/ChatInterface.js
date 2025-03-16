@@ -141,10 +141,6 @@ export default function ChatInterface({ botId, botName }) {
   
   return (
     <div className="flex flex-col h-full bg-gray-50">
-      <header className="bg-blue-600 text-white py-4 px-6 shadow-md">
-        <h1 className="text-xl font-bold">{botName || `Chat Bot #${botId}`}</h1>
-      </header>
-      
       {error && (
         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
           <div className="flex items-center">

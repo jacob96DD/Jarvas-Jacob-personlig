@@ -10,19 +10,12 @@ export default function Bot2() {
         <title>Chat med Standard GPT | Chat App</title>
       </Head>
       
-      {/* Blå header med bottens navn */}
-      <header className="bg-blue-600 text-white py-4">
-        <div className="container mx-auto px-4">
-          <h1 className="text-xl font-semibold">Standard GPT Bot</h1>
-        </div>
-      </header>
-      
-      {/* Tilbageknap under headeren */}
-      <div className="bg-gray-50 py-3 px-4 border-b border-gray-200">
-        <Link href="/" className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition-colors w-fit">
-          <FiArrowLeft className="text-lg" />
-          <span>Tilbage til forsiden</span>
+      <div className="flex items-center justify-center p-4 bg-blue-500 text-white">
+        <Link href="/" className="absolute left-4 flex items-center gap-1 hover:text-gray-200 transition-colors">
+          <FiArrowLeft />
+          <span>Hjem</span>
         </Link>
+        <h1 className="text-lg">Erhvervsjura beta GPT Bot</h1>
       </div>
       
       <ChatInterface botId={2} botName="Standard GPT Bot" />

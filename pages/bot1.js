@@ -7,19 +7,18 @@ export default function Bot1() {
   return (
     <div className="flex flex-col h-screen">
       <Head>
-        <title>Chat med Din Assistant | Chat App</title>
+        <title>Chat med Din Hirring assistent | Chat App</title>
       </Head>
       
-      <header className="bg-white border-b border-gray-200 py-4">
-        <div className="container mx-auto px-4">
-          <Link href="/" className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition-colors w-fit">
-            <FiArrowLeft className="text-lg" />
-            <span>Tilbage til forsiden</span>
-          </Link>
-        </div>
-      </header>
+      <div className="flex items-center justify-center p-4 bg-blue-500 text-white">
+        <Link href="/" className="absolute left-4 flex items-center gap-1 hover:text-gray-200 transition-colors">
+          <FiArrowLeft />
+          <span>Hjem</span>
+        </Link>
+        <h1 className="text-lg">Hirring assistent</h1>
+      </div>
       
-      <ChatInterface botId={1} botName="Din Tilpassede Assistant" />
+      <ChatInterface botId={2} botName="Standard GPT Bot" />
     </div>
   );
 }
