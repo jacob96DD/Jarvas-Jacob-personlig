@@ -6,15 +6,7 @@ export default function Home() {
     <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-gray-50">
       <main className="flex flex-col items-center justify-center w-full flex-1 px-4 sm:px-20 text-center">
         <h1 className="text-4xl font-bold mb-6">
-<<<<<<< HEAD
-<<<<<<< HEAD
           BESTSELLER TECH meet <span className="text-blue-600"> Jarvis</span>
-=======
-          Bestseller meet <span className="text-blue-600"> Jarvis</span>
->>>>>>> parent of eef86e7 (updates)
-=======
-        BESTSELLER TECH meet <span className="text-blue-600"> Jarvis</span>
->>>>>>> parent of 0af534e (ui)
         </h1>
         
         <p className="text-lg mb-8">
