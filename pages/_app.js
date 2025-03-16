@@ -5,8 +5,8 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <Head>
-        <title>Next.js Chat App</title>
-        <meta name="description" content="A chat application built with Next.js" />
+        <title>Jarvis</title>
+        <meta name="description" content="A chat application built for helping Jacob" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Component {...pageProps} />
