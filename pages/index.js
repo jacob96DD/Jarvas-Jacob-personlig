@@ -8,7 +8,7 @@ export default function Home() {
         main className = "flex flex-col items-center justify-center w-full flex-1 px-4 sm:px-20 text-center" >
         <
         h1 className = "text-4xl font-bold mb-6" >
-        Hey < span className = "text-red-600" > OK < /span>! Mød <span className="text-blue-600"> Jarvis</span >
+        Goddavs < span className = "text-red-600" > du < /span>! Mød <span className="text-blue-600"> Jarvis</span >
         <
         /h1>
 
@@ -30,7 +30,7 @@ export default function Home() {
         FiMessageSquare className = "text-purple-600 text-2xl" / >
         <
         /div> <
-        h2 className = "text-xl font-semibold" > Find ud af om jacob er den rette kandidat til din næste job < /h2> <
+        h2 className = "text-xl font-semibold" > Find ud af om jacob er den rette kandidat til din næste job? < /h2> <
         p className = "text-gray-600 mt-2" > Spørg om hans erfaringer og hvad han kan gøre
         for jer. < /p> < /
         div > <
